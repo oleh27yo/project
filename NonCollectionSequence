@@ -1,0 +1,73 @@
+/*Exercise 32: (2) Following the example of MultilterableClass, add reversed( ) and
+        randomized( ) methods to NonCollectionSequence.java, as well as making
+        NonCollectionSequence implement Iterable, and show that all the approaches work in
+        foreach statements.*/
+
+import java.util.*;
+
+class PetSequence {
+    protected String[] pets = {"Dog", "Cat", "Mouse", "Negro"};
+
+}
+
+public class NonCollectionSequence extends PetSequence implements Iterable<String> {
+    public static void main(String[] args) {
+        NonCollectionSequence nc = new NonCollectionSequence();
+        for(String pet : nc)
+            System.out.println(pet);
+        System.out.println("__________________");
+        for(String pet : nc.reversed())
+            System.out.println(pet);
+        System.out.println("__________________");
+        for(String pet : nc.randomized())
+            System.out.println(pet);
+    }
+
+
+    public Iterator<String> iterator() {
+        return new Iterator<String>() {
+            private int index = 0;
+
+            public boolean hasNext() {
+                return index < pets.length;
+            }
+
+            public String next() {
+                return pets[index++];
+            }
+
+            public void remove() { // Not implemented
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+    public Iterable<String> reversed() {
+        return new Iterable<String>() {
+            @Override
+            public Iterator<String> iterator() {
+                return new Iterator<String>() {
+                    int current = pets.length - 1;
+                    @Override
+                    public boolean hasNext() {
+                        return current > -1;
+                    }
+
+                    @Override
+                    public String next() {
+                        return pets[current--];
+                    }
+                };
+            }
+        };
+    }
+
+    public Iterable<String> randomized(){
+        return new Iterable<String>(){
+            public Iterator<String> iterator(){
+                List<String> shuffled = new ArrayList<>(Arrays.asList(pets));
+                Collections.shuffle(shuffled, new Random());
+                return shuffled.iterator();
+            }
+        };
+    }
+}
